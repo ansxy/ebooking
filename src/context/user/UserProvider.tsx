@@ -7,7 +7,7 @@ export const UserProvider: React.FC<any> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const { data: session, status } = useSession();
-
+  console.log(session);
   useEffect(() => {
     if (session) {
       setUser(session.user);
