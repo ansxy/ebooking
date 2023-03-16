@@ -1,16 +1,14 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { createContext } from "react";
 
-interface UserContextProps {
+export interface UserContextProps {
   user: any | null;
   loading: boolean;
-  login: () => Promise<void>;
+  login: (params: any) => Promise<void>;
   logout: () => Promise<void>;
 }
-
 export const UserContext = createContext<UserContextProps>({
   user: null,
-  loading: true,
+  loading: false,
   login: async () => {},
   logout: async () => {},
 });

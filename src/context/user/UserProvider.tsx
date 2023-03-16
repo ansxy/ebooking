@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { UserContext } from "./UserContext";
+import { UserContextProps } from "./UserContext";
+import { UserContext } from "@/context/user/UserContext";
 
 export const UserProvider: React.FC<any> = ({ children }) => {
   const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState<boolean>(true);
   const { data: session, status } = useSession();
-  console.log(session);
   useEffect(() => {
     if (session) {
       setUser(session.user);
@@ -17,13 +16,16 @@ export const UserProvider: React.FC<any> = ({ children }) => {
 
     setLoading(false);
   }, [session]);
-
-  const login = async () => {
-    await signIn();
+  const login = async (params: any) => {
+    await signIn("credentials", {
+      email: params.email,
+      password: params.password,
+      callbackUrl: session?.user.role === "PENGGUNA" ? "/home" : "/admin",
+    });
   };
 
   const logout = async () => {
-    await signOut();
+    await signOut({ callbackUrl: "/login" });
   };
 
   return (
