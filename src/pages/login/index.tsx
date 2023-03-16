@@ -12,28 +12,45 @@ const SignIn: NextPage = (props): JSX.Element => {
     await login(userInfo);
   };
   return (
-    <div className="sign-in-form">
-      <form onSubmit={handleSubmit}>
-        <h1>Login</h1>
-        <input
-          value={userInfo.email}
-          onChange={({ target }) =>
-            setUserInfo({ ...userInfo, email: target.value })
-          }
-          type="email"
-          placeholder="john@email.com"
-        />
-        <input
-          value={userInfo.password}
-          onChange={({ target }) =>
-            setUserInfo({ ...userInfo, password: target.value })
-          }
-          type="password"
-          placeholder="****"
-        />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+    <>
+      <title>Login</title>
+      <div className="flex w-full h-full justify-center items-center ">
+        <section className="p-20  bg-slate-500 rounded-lg">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-9">
+            <div className="w-full flex justify-center">
+              <h1 className="font-bold text-2xl text-white">Login</h1>
+            </div>
+            <div className="flex flex-col">
+              <label>Email</label>
+              <input
+                className="p-5 rounded-md"
+                value={userInfo.email}
+                onChange={({ target }) =>
+                  setUserInfo({ ...userInfo, email: target.value })
+                }
+                type="email"
+                placeholder="john@email.com"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label>Password</label>
+              <input
+                className="p-5 rounded-md"
+                value={userInfo.password}
+                onChange={({ target }) =>
+                  setUserInfo({ ...userInfo, password: target.value })
+                }
+                type="password"
+                placeholder="****"
+              />
+            </div>
+            <button type="submit" className="btn btn-primary">
+              Login
+            </button>
+          </form>
+        </section>
+      </div>
+    </>
   );
 };
 
