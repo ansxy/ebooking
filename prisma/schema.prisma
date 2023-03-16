@@ -1,25 +1,130 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["balance", "flights", "hotels", "user"]
 }
+
+// model Account {
+//   id                String  @id @default(cuid())
+//   userId            String
+//   type              String
+//   provider          String
+//   providerAccountId String
+//   refresh_token     String? @db.Text
+//   access_token      String? @db.Text
+//   expires_at        Int?
+//   token_type        String?
+//   scope             String?
+//   id_token          String  @db.Text
+//   session_state     String
+//   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@unique([provider, providerAccountId])
+//   @@schema("user")
+// }
+
+// model Session {
+//   id           String   @id @default(cuid())
+//   sessionToken String   @unique
+//   userId       String
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//   @@schema("user")
+// }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  roles    Role[]
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  createAt  DateTime @default(now())
+  updateAt  DateTime @updatedAt
+  role      Role
+  airportId Int?     @unique
+  airport   Airpots? @relation(fields: [airportId], references: [id], onUpdate: Cascade)
+  hotelId   Int?     @unique
+  hotel     Hotel?   @relation(fields: [hotelId], references: [id], onUpdate: Cascade)
+  balanceId Int?     @unique
+  balance   Balance? @relation(fields: [balanceId], references: [id], onDelete: Cascade)
+  // accounts  Account[]
+  // sessions  Session[]
+
+  @@schema("user")
 }
 
-model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  users User[]
+// model VerificationToken {
+//   identifier String
+//   token      String   @unique
+//   expires    DateTime
+
+//   @@unique([identifier, token])
+//   @@schema("user")
+// }
+
+model Airpots {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  user        User?
+  flights     Flight[]
+
+  @@schema("flights")
+}
+
+model Flight {
+  id             Int      @id @default(autoincrement())
+  from           String
+  destination    String
+  delayed_time   Int?
+  deparatur_time DateTime
+  arrival_time   DateTime
+  price          Decimal
+  flight_type    String
+  airportId      Int
+  airport        Airpots  @relation(fields: [airportId], references: [id])
+
+  @@schema("flights")
+}
+
+model Hotel {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  user        User?
+  rooms       Room[]
+
+  @@schema("hotels")
+}
+
+model Room {
+  id              Int    @id @default(autoincrement())
+  room_number     Int
+  price_per_night Int
+  room_type       String
+  hotelId         Int
+  hotel           Hotel  @relation(fields: [hotelId], references: [id])
+
+  @@schema("hotels")
+}
+
+model Balance {
+  id     Int     @id @default(autoincrement())
+  amount Decimal
+  user   User?
+
+  @@schema("balance")
+}
+
+enum Role {
+  ADMIN
+  PENGGUNA
+  MITRA
+
+  @@schema("user")
 }
