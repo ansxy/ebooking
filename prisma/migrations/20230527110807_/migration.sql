@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "hotels"."Room" ADD COLUMN     "available" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

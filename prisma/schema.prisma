@@ -1,0 +1,141 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["balance", "flights", "hotels", "user"]
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  name               String
+  email              String              @unique
+  password           String
+  createAt           DateTime            @default(now())
+  updateAt           DateTime            @updatedAt
+  role               Role
+  airportId          String?             @unique
+  hotelId            String?             @unique
+  balanceId          Int?                @unique
+  flightTransactions Flighttransaction[]
+  roomTransactions   Roomtransaction[]
+  airport            Airpots?            @relation(fields: [airportId], references: [id])
+  balance            Balance?            @relation(fields: [balanceId], references: [id], onDelete: Cascade)
+  hotel              Hotel?              @relation(fields: [hotelId], references: [id])
+
+  @@schema("user")
+}
+
+model Airpots {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  flights     Flight[]
+  user        User?
+
+  @@schema("flights")
+}
+
+model Flight {
+  id                 String              @id @default(cuid())
+  from               String
+  destination        String
+  delayed_time       Int?
+  deparatur_time     DateTime
+  arrival_time       DateTime
+  price              Decimal
+  flight_type        String
+  airportId          String
+  airport            Airpots             @relation(fields: [airportId], references: [id])
+  flightTransactions Flighttransaction[]
+
+  @@schema("flights")
+}
+
+model Hotel {
+  id          String @id @default(cuid())
+  name        String
+  description String
+  address     String
+  city        String
+  phone       String
+  rooms       Room[]
+  owner       User?
+
+  @@schema("hotels")
+}
+
+model Room {
+  id              String            @id @default(cuid())
+  room_number     Int
+  price_per_night Int
+  available DateTime @default(now())
+  room_type       String
+  hotelId         String
+  hotel           Hotel             @relation(fields: [hotelId], references: [id])
+  serviceRoom     Service[]
+  roomTransaction Roomtransaction[]
+
+  @@schema("hotels")
+}
+
+model Service {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  roomId      String
+  room        Room   @relation(fields: [roomId], references: [id])
+
+  @@schema("hotels")
+}
+
+model Balance {
+  id     Int     @id @default(autoincrement())
+  amount Decimal
+  user   User?
+
+  @@schema("balance")
+}
+
+model Flighttransaction {
+  id            String      @id @default(cuid())
+  userid        String
+  flightid      String
+  transactionId String      @unique
+  flights       Flight      @relation(fields: [flightid], references: [id], onDelete: Cascade)
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userid], references: [id], onDelete: Cascade)
+
+  @@schema("user")
+}
+
+model Roomtransaction {
+  id            String      @id @default(cuid())
+  userid        String
+  roomid        String
+  transactionId String      @unique
+  rooms         Room        @relation(fields: [roomid], references: [id], onDelete: Cascade)
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userid], references: [id], onDelete: Cascade)
+
+  @@schema("user")
+}
+
+model Transaction {
+  id                 String             @id @default(cuid())
+  flightTransactions Flighttransaction?
+  roomTransactions   Roomtransaction?
+
+  @@schema("user")
+}
+
+enum Role {
+  ADMIN
+  PENGGUNA
+  MITRA
+
+  @@schema("user")
+}
