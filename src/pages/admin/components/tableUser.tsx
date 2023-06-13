@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import EditModal from "./editModal";
 interface Props {
   data: [
     {
@@ -7,15 +8,18 @@ interface Props {
       email: string;
       role: string;
       name: string;
+      amount: any;
+      balance: BigInt;
     }
   ];
 }
 
 const TableUser: React.FC<Props> = ({ data }: Props) => {
-  const [user, setUser] = useState<any>(data);
+  const [users, setUsers] = useState<any>(data);
+  const [user, setUser] = useState<any>(data[0]);
   const deleteUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setUser(data.filter((item) => item.email !== e.currentTarget.value));
+    setUsers(data.filter((item) => item.email !== e.currentTarget.value));
     await axios.delete("http://localhost:3000/api/user", {
       data: {
         email: e.currentTarget.value,
@@ -23,8 +27,19 @@ const TableUser: React.FC<Props> = ({ data }: Props) => {
     });
   };
 
+  const temp = async (e: React.MouseEvent<HTMLLabelElement>) => {
+    setUser(data[parseInt(e.currentTarget.id)]);
+  };
   return (
-    <div className="">
+    <>
+      <EditModal
+        id={user.id}
+        email={user.email}
+        role={user.role}
+        name={user.name}
+        amount={user.amount}
+        balance={user.balanace}
+      ></EditModal>
       <table className="table table-compact w-full">
         <thead>
           <tr>
@@ -37,14 +52,14 @@ const TableUser: React.FC<Props> = ({ data }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {user?.map((item: any, i: any) => (
+          {users?.map((item: any, i: any) => (
             <tr key={i}>
               <th>{i}</th>
               <td>{item.name}</td>
               <td>{item.email}</td>
-              <td>{item.balance === null ? 0 : item.balance}</td>
+              <td>{item.balance === null ? 0 : item.balance.amount}</td>
               <td>{item.role}</td>
-              <td>
+              <td className="flex w-full gap-10">
                 <button
                   className="btn btn-warning"
                   onClick={deleteUser}
@@ -52,6 +67,14 @@ const TableUser: React.FC<Props> = ({ data }: Props) => {
                 >
                   Hapus
                 </button>
+                <label
+                  htmlFor="edit-modal"
+                  onClick={temp}
+                  className="btn btn-info"
+                  id={i}
+                >
+                  Edit
+                </label>
               </td>
             </tr>
           ))}
@@ -77,7 +100,7 @@ const TableUser: React.FC<Props> = ({ data }: Props) => {
           </tr>
         </tfoot>
       </table>
-    </div>
+    </>
   );
 };
 

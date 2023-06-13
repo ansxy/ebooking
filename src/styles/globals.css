@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    background-color: antiquewhite;
+}
+
+#__next {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100dvh;
+}

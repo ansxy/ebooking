@@ -6,7 +6,6 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { name, email, password, role } = req.body;
-
   const hashedPassword = await bycrpt.hash(password, 10);
   try {
     const user = await prisma.user.create({

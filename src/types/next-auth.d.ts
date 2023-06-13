@@ -10,6 +10,7 @@ declare module "next-auth" {
   interface User {
     role: String;
     accessToken: String;
+    balance?: BigInteger;
   }
 }
 
@@ -20,6 +21,8 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: Account.userId;
+      balance?: any;
+      role: any;
     };
   }
 }

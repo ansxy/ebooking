@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../lib/prisma";
-import { getToken } from "next-auth/jwt";
 import { User } from "@prisma/client";
 
 type Data = {
@@ -9,7 +8,7 @@ type Data = {
   message?: any;
 };
 
-const allowedMethods = ["GET", "PUT", "DELETE"];
+const allowedMethods = ["GET", "PUT", "DELETE", "POST"];
 
 export default async function handler(
   req: NextApiRequest,

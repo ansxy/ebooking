@@ -59,8 +59,11 @@ model Hotel {
   id          String @id @default(cuid())
   name        String
   description String
+  address     String
+  city        String
+  phone       String
   rooms       Room[]
-  user        User?
+  owner       User?
 
   @@schema("hotels")
 }
@@ -69,10 +72,22 @@ model Room {
   id              String            @id @default(cuid())
   room_number     Int
   price_per_night Int
+  available DateTime @default(now())
   room_type       String
   hotelId         String
   hotel           Hotel             @relation(fields: [hotelId], references: [id])
+  serviceRoom     Service[]
   roomTransaction Roomtransaction[]
+
+  @@schema("hotels")
+}
+
+model Service {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  roomId      String
+  room        Room   @relation(fields: [roomId], references: [id])
 
   @@schema("hotels")
 }

@@ -31,7 +31,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 const Index: React.FC<any> = ({
   data,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  console.log(data);
   return (
     <Layout>
       <div className="flex flex-col gap-y-8">
